@@ -1,11 +1,15 @@
 class GamesController < ApplicationController
   def new
     @letters = ("a".."z").to_a.sample(10)
+    @start_time = Time.now
   end
 
   def score
     @user_input = params[:user_input].downcase
     @letters = params[:letters]
+    # @start_time = DateTime.rfc3339(params[:start_time]).to_time.to_i
+    # @start_time = params[:start_time].to_datetime
+    # @final_time = Time.now
     session[:score] ||= 0
     url = "https://wagon-dictionary.herokuapp.com/#{@user_input}"
     uri = URI(url)
@@ -14,7 +18,7 @@ class GamesController < ApplicationController
     if @data["found"]
       if check_valid(@user_input, @letters)
         @message = "Congratulations! #{@user_input.upcase} is a valid word!"
-        session[:score] += 1
+        session[:score] += @user_input.length
       else
         @message = "Sorry but #{@user_input.upcase} can't be built out of #{@letters.upcase}"
       end
